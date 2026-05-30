@@ -1,0 +1,6 @@
+{
+  "name": "ThermalEden",
+  "description": "An immersive digital biosphere and thermal ecology simulator exploring core resonance, thermal venting, and environmental impact mutations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
