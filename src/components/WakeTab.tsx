@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Sparkles, Terminal as TerminalIcon, ShieldAlert, CheckCircle2, Zap } from 'lucide-react';
 import { playBeep, playWakeUpSweep } from '../utils/audio';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface WakeTabProps {
   onSequenceComplete: () => void;
@@ -8,28 +9,29 @@ interface WakeTabProps {
 }
 
 export default function WakeTab({ onSequenceComplete, isCompleted }: WakeTabProps) {
+  const { t } = useLanguage();
   const [progress, setProgress] = useState(0);
   const [logLines, setLogLines] = useState<string[]>([
-    '>> PRE-IGNITION INTEGRITY VERIFIED',
-    '>> ATOMIC COAXIAL RESONATORS ENGAGED',
-    '>> DEPTH PRESSURE CHANNELS EQUALIZED TO 344 BAR'
+    t('wake.log_pre1'),
+    t('wake.log_pre2'),
+    t('wake.log_pre3')
   ]);
   const [isBooting, setIsBooting] = useState(true);
   const logsEndRef = useRef<HTMLDivElement>(null);
 
-  const potentialLogs = [
-    'ALIGNING THERMAL CODES: VENT SEC-1',
-    'DETECTING SEISMIC DEPTH RIFT CHANNELS',
-    'GEOTHERMAL ENERGY COUPLING AT 45.4%',
-    'INJECTING SENSITIVE CHEMOSTAT REACTANT V2',
-    'SYSTEM STATUS: THERMAL RESISTORS ENGAGING',
-    'MONITORING BIOSYSTEM THERMOPHILE POPULATION',
-    'VENT PRESSURE STABILIZATION MATRIX INITIATED',
-    'HEATING COILS RESPONDING NOMINALLY',
-    'STRESS LEVELS DETECTED - CALCULATING TOLERANCE',
-    'RESONANCE PULL ALIGNED AT 48.4 HZ',
-    'METABOLIC BIOME CODES COMMITTED',
-    'READY FOR FULL ECOSYSTEM CALIBRATION_V02'
+  const potentialLogKeys = [
+    'wake.log_align',
+    'wake.log_detect',
+    'wake.log_geo',
+    'wake.log_inject',
+    'wake.log_status',
+    'wake.log_monitor',
+    'wake.log_vent',
+    'wake.log_heating',
+    'wake.log_stress',
+    'wake.log_resonance',
+    'wake.log_metabolic',
+    'wake.log_ready'
   ];
 
   useEffect(() => {
@@ -43,7 +45,7 @@ export default function WakeTab({ onSequenceComplete, isCompleted }: WakeTabProp
         
         // Add random cool log line
         if (Math.random() > 0.4 && progress < 90) {
-          const randomMsg = potentialLogs[Math.floor(Math.random() * potentialLogs.length)];
+          const randomMsg = t(potentialLogKeys[Math.floor(Math.random() * potentialLogKeys.length)]);
           const formatted = `[ OK ] [${new Date().toLocaleTimeString()}] ${randomMsg}`;
           setLogLines(prev => [...prev.slice(-15), formatted]);
           playBeep(450 + nextProg * 3, 0.08, 'sine');
@@ -57,7 +59,7 @@ export default function WakeTab({ onSequenceComplete, isCompleted }: WakeTabProp
   useEffect(() => {
     if (progress === 100 && isBooting) {
       setIsBooting(false);
-      const finished = `[ SUCCESS ] THERMALEDEN INTERFACE READY • INITIATE MAIN ACTIVE SYSTEM`;
+      const finished = t('wake.log_success');
       setLogLines(prev => [...prev.slice(-15), finished]);
       playWakeUpSweep();
     }
@@ -71,7 +73,7 @@ export default function WakeTab({ onSequenceComplete, isCompleted }: WakeTabProp
   const accelerateBoot = () => {
     if (progress < 100 && isBooting) {
       setProgress(prev => Math.min(100, prev + 15));
-      setLogLines(prev => [...prev, `[ INTENSIVE CORE BOOST TRIGGERED BY SYS_OPERATOR ]`]);
+      setLogLines(prev => [...prev, t('wake.log_boost')]);
       playBeep(880, 0.1, 'square');
     }
   };
@@ -84,10 +86,10 @@ export default function WakeTab({ onSequenceComplete, isCompleted }: WakeTabProp
         <div className="lg:col-span-7 space-y-6">
           <div className="space-y-2">
             <span className="font-mono text-xs text-amber-500 tracking-widest block uppercase">
-              // RECTIFIER INITIATION METRICS //
+              {t('wake.badge')}
             </span>
             <h2 className="text-3xl font-light text-white tracking-wide uppercase">
-              WAKING THE <span className="font-bold text-amber-500">BIOSPHERE</span>
+              {t('wake.title')} <span className="font-bold text-amber-500">{t('wake.title_highlight')}</span>
             </h2>
           </div>
 
@@ -117,7 +119,7 @@ export default function WakeTab({ onSequenceComplete, isCompleted }: WakeTabProp
             {/* Core statistics ticker */}
             <div className="space-y-3 flex-1 w-full">
               <div className="flex justify-between items-center text-xs font-mono">
-                <span className="text-slate-400">CORE ENERGY MATRIX:</span>
+                <span className="text-slate-400">{t('wake.matrix')}</span>
                 <span className="text-amber-400 font-bold">{progress}%</span>
               </div>
               
@@ -131,11 +133,11 @@ export default function WakeTab({ onSequenceComplete, isCompleted }: WakeTabProp
 
               <div className="grid grid-cols-2 gap-4 font-mono text-[10px] text-slate-500">
                 <div>
-                  <span className="block text-slate-400">TEMP_INDEX</span>
+                  <span className="block text-slate-400">{t('wake.temp_index')}</span>
                   <span className="text-slate-300 font-bold">{(84 + (progress * 2.8)).toFixed(1)}°C</span>
                 </div>
                 <div>
-                  <span className="block text-slate-400">STABILITY_REPL</span>
+                  <span className="block text-slate-400">{t('wake.stability')}</span>
                   <span className="text-slate-300 font-bold">{(100 - (progress * 0.4)).toFixed(0)}%</span>
                 </div>
               </div>
@@ -151,7 +153,7 @@ export default function WakeTab({ onSequenceComplete, isCompleted }: WakeTabProp
               id="btn-accelerate"
             >
               <Zap size={13} className="text-amber-400" />
-              <span>ACCELERATE IGNITION</span>
+              <span>{t('wake.btn_accelerate')}</span>
             </button>
 
             {progress === 100 && (
@@ -164,7 +166,7 @@ export default function WakeTab({ onSequenceComplete, isCompleted }: WakeTabProp
                 id="btn-engage-active"
               >
                 <CheckCircle2 size={13} />
-                <span>ENGAGE MAIN SYSTEMS</span>
+                <span>{t('wake.btn_engage')}</span>
               </button>
             )}
           </div>
@@ -177,7 +179,7 @@ export default function WakeTab({ onSequenceComplete, isCompleted }: WakeTabProp
           <div className="flex items-center justify-between border-b border-slate-800 pb-2 mb-2">
             <div className="flex items-center gap-2">
               <TerminalIcon size={12} className="text-amber-500" />
-              <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider">IGNITION_LOG_STREAM</span>
+              <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider">{t('wake.log_title')}</span>
             </div>
             <div className="flex gap-1">
               <span className="h-1.5 w-1.5 rounded-full bg-slate-800" />
@@ -205,8 +207,8 @@ export default function WakeTab({ onSequenceComplete, isCompleted }: WakeTabProp
           </div>
 
           <div className="border-t border-slate-800 mt-2 pt-2 flex items-center justify-between text-[9px] text-slate-500">
-            <span>COORDINATE: SEG_Z_VENT_4</span>
-            <span>FREQ: 144 HZ</span>
+            <span>{t('wake.coord')}</span>
+            <span>{t('wake.freq')}</span>
           </div>
         </div>
 

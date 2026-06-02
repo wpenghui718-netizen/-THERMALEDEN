@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Microchip, Activity, Thermometer, ShieldCheck, HelpCircle, Dna, Info } from 'lucide-react';
 import { Specimen, SystemMetrics } from '../types';
 import { playBeep } from '../utils/audio';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface BiosphereTabProps {
   specimens: Specimen[];
@@ -16,6 +17,7 @@ export default function BiosphereTab({
   onModifyMetrics,
   onUpdateSpecimens,
 }: BiosphereTabProps) {
+  const { t } = useLanguage();
   const [selectedSpecimen, setSelectedSpecimen] = useState<Specimen>(specimens[0]);
   const [thermalSlider, setThermalSlider] = useState(systemMetrics.coreTemp);
   const [mineralSaturation, setMineralSaturation] = useState(65);
@@ -72,6 +74,10 @@ export default function BiosphereTab({
   // Keep selected specimen item in sync with updated list
   const currentSpecimenState = specimens.find(s => s.id === selectedSpecimen.id) || selectedSpecimen;
 
+  const specNameKey = (id: string) => `spec.${id}`;
+  const specClassKey = (id: string) => `spec.${id}_class`;
+  const specTempKey = (id: string) => `spec.${id}_temp`;
+
   return (
     <div className="flex-1 p-6 grid-bg-ambient min-h-[70vh] flex flex-col justify-center">
       <div className="max-w-6xl w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
@@ -81,16 +87,16 @@ export default function BiosphereTab({
           <div className="space-y-4">
             <div className="space-y-1">
               <span className="font-mono text-[9px] text-emerald-400 bg-emerald-950/50 border border-emerald-800/40 px-2 py-0.5 rounded uppercase tracking-widest inline-block select-none">
-                04 // ECOLOGICAL REGULATOR
+                {t('bio.badge')}
               </span>
               <h3 className="text-xl font-light text-white uppercase font-sans">
-                THERMAL <span className="font-bold text-emerald-400">INJECTORS</span>
+                {t('bio.title')} <span className="font-bold text-emerald-400">{t('bio.title_highlight')}</span>
               </h3>
             </div>
             <div className="w-12 h-[2px] bg-emerald-400" />
             
             <p className="text-slate-400 text-xs font-sans leading-relaxed">
-              Regulate core vent thermodynamic emissions. Throttling temperature directly drives chemosynthetic synthesis inside the deep ecological chambers.
+              {t('bio.desc')}
             </p>
 
             {/* Microscopic core graphics / Peak metabolic resonance */}
@@ -106,12 +112,12 @@ export default function BiosphereTab({
               </div>
 
               <div className="flex-1 text-right">
-                <span className="text-[8px] text-slate-500 uppercase block">METABOLIC_RESONANCE</span>
+                <span className="text-[8px] text-slate-500 uppercase block">{t('bio.metabolic')}</span>
                 <span className="text-xl font-bold text-emerald-400 tracking-wider">
                   {systemMetrics.metabolicResonance.toFixed(1)} Hz
                 </span>
                 <span className="text-[8px] text-slate-400 block mt-1 uppercase">
-                  STATUS: {systemMetrics.metabolicResonance > 75 ? 'HYPERCELLULAR' : 'STABLE_BIOME'}
+                  STATUS: {systemMetrics.metabolicResonance > 75 ? t('bio.status_hyper') : t('bio.status_stable')}
                 </span>
               </div>
             </div>
@@ -122,7 +128,7 @@ export default function BiosphereTab({
                 <div className="flex justify-between text-[10px] text-slate-400">
                   <span className="flex items-center gap-1">
                     <Thermometer size={12} className="text-amber-500" />
-                    COAXIAL CORE TEMP:
+                    {t('bio.temp')}
                   </span>
                   <span className="text-emerald-400 font-bold">{thermalSlider.toFixed(1)}°C</span>
                 </div>
@@ -145,7 +151,7 @@ export default function BiosphereTab({
                 <div className="flex justify-between text-[10px] text-slate-400">
                   <span className="flex items-center gap-1">
                     <Activity size={12} className="text-emerald-500" />
-                    H2S MICRO MINERAL FOOD:
+                    {t('bio.mineral')}
                   </span>
                   <span className="text-emerald-400 font-bold">{mineralSaturation}%</span>
                 </div>
@@ -167,8 +173,8 @@ export default function BiosphereTab({
           </div>
 
           <div className="border-t border-slate-800/80 pt-3 text-[10px] font-mono text-slate-500 flex justify-between select-none">
-            <span>SATELLITE SECTOR: RED-RIFT-04</span>
-            <span>PH_LEVEL: 6.4 (ACIDIC)</span>
+            <span>{t('bio.satellite')}</span>
+            <span>{t('bio.ph')}</span>
           </div>
         </div>
 
@@ -177,10 +183,10 @@ export default function BiosphereTab({
           <div className="flex items-center gap-2 border-b border-slate-800 pb-3 mb-4 justify-between">
             <div className="flex items-center gap-1.5">
               <Dna className="text-emerald-400" size={15} />
-              <span className="font-mono text-[10px] font-bold text-slate-200">BIOSPHERE INHABITANTS</span>
+              <span className="font-mono text-[10px] font-bold text-slate-200">{t('bio.inhabitants')}</span>
             </div>
             <span className="font-mono text-[9px] bg-slate-900 text-slate-400 px-1.5 py-0.5 rounded border border-slate-800 uppercase">
-              POP: {specimens.length}
+              {t('bio.pop')} {specimens.length}
             </span>
           </div>
 
@@ -203,8 +209,8 @@ export default function BiosphereTab({
                   id={`btn-specimen-select-${spec.id}`}
                 >
                   <div className="space-y-0.5 truncate flex-1">
-                    <span className="block font-mono text-[11px] font-bold text-slate-200 truncate">{spec.name}</span>
-                    <span className="block text-[9px] text-slate-500 font-sans truncate">{spec.classification}</span>
+                    <span className="block font-mono text-[11px] font-bold text-slate-200 truncate">{t(specNameKey(spec.id))}</span>
+                    <span className="block text-[9px] text-slate-500 font-sans truncate">{t(specClassKey(spec.id))}</span>
                   </div>
 
                   <span className={`font-mono text-[9px] font-semibold px-2 py-0.5 rounded border ${
@@ -227,8 +233,8 @@ export default function BiosphereTab({
             <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
               <Microchip className="text-emerald-400" size={15} />
               <div>
-                <span className="font-mono text-[8px] text-slate-500 uppercase block">CYBERNETIC SPECIMEN ENVELOPE</span>
-                <span className="font-mono text-xs font-bold text-slate-200">{currentSpecimenState.name}</span>
+                <span className="font-mono text-[8px] text-slate-500 uppercase block">{t('bio.specimen')}</span>
+                <span className="font-mono text-xs font-bold text-slate-200">{t(specNameKey(currentSpecimenState.id))}</span>
               </div>
             </div>
 
@@ -242,27 +248,27 @@ export default function BiosphereTab({
                 className="w-full h-full object-cover brightness-75 contrast-125"
               />
               <div className="absolute bottom-2 left-2 bg-slate-950/80 border border-slate-800 text-[8px] font-mono text-emerald-400 px-1.5 py-0.5 rounded uppercase">
-                CHEMOSYNTHESIS PATHWAY
+                {t('bio.chemo')}
               </div>
             </div>
 
             {/* Biological Metrics Info */}
             <div className="space-y-2 font-mono text-xs">
               <div className="flex justify-between border-b border-slate-900 pb-1.5">
-                <span className="text-slate-500">THERMAL INDEX:</span>
-                <span className="text-slate-300">{currentSpecimenState.thermalTolerance}</span>
+                <span className="text-slate-500">{t('bio.thermal_idx')}</span>
+                <span className="text-slate-300">{t(specTempKey(currentSpecimenState.id))}</span>
               </div>
 
               <div className="flex justify-between border-b border-slate-900 pb-1.5">
-                <span className="text-slate-500">GROWTH STAGE:</span>
+                <span className="text-slate-500">{t('bio.growth')}</span>
                 <span className={`${currentSpecimenState.status === 'THRIVING' ? 'text-emerald-400 font-bold' : 'text-slate-300'}`}>
-                  {currentSpecimenState.resonance > 80 ? 'HYPER-EXTREMOPHILE' : 'DEVELOPING_COLONY'}
+                  {currentSpecimenState.resonance > 80 ? t('bio.growth_hyper') : t('bio.growth_dev')}
                 </span>
               </div>
 
               <div className="flex justify-between pb-1.5">
-                <span className="text-slate-500">RESISTANCE INDEX:</span>
-                <span className="text-emerald-400">{currentSpecimenState.resonance.toFixed(0)}% resonance</span>
+                <span className="text-slate-500">{t('bio.resistance')}</span>
+                <span className="text-emerald-400">{currentSpecimenState.resonance.toFixed(0)}% {t('bio.resonance')}</span>
               </div>
             </div>
           </div>
@@ -271,7 +277,7 @@ export default function BiosphereTab({
             <div className="flex items-start gap-2">
               <Info size={14} className="text-emerald-500 mt-0.5" />
               <p className="text-[10px] text-slate-400 font-sans leading-relaxed">
-                Extremophilic organisms feed on toxic mineral effluents like Hydrogen Sulfide gas. Maintain Coaxial Core Temp above <span className="text-emerald-400 font-medium">300°C</span> to achieve maximum biological thrives.
+                {t('bio.info')}
               </p>
             </div>
           </div>

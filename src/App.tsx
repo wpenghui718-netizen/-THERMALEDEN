@@ -11,8 +11,11 @@ import BiosphereTab from './components/BiosphereTab';
 import ImpactTab from './components/ImpactTab';
 import MemoryTab from './components/MemoryTab';
 import NavBar from './components/NavBar';
+import LanguageSelector from './components/LanguageSelector';
+import { useLanguage } from './i18n/LanguageContext';
 
 export default function App() {
+  const { showSelector } = useLanguage();
   const [activeTab, setActiveTab] = useState<TabId>('entry');
   const [systemState, setSystemState] = useState<'Dormant' | 'Waking' | 'Active' | 'Mutation'>('Dormant');
   const [isMuted, setIsMuted] = useState(true);
@@ -160,6 +163,9 @@ export default function App() {
   return (
     <div className="min-h-screen text-slate-100 bg-[#020617] flex flex-col justify-between select-none scanline-effect">
       
+      {/* Language Selector Modal */}
+      {showSelector && <LanguageSelector />}
+
       {/* HUD System Monitor Header */}
       <Header
         systemState={systemState}

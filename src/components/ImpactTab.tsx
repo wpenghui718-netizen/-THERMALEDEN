@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { AlertCircle, Flame, Wind, Activity, Zap, RefreshCw, TriangleAlert } from 'lucide-react';
 import { SystemMetrics, Specimen } from '../types';
 import { playBeep } from '../utils/audio';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface ImpactTabProps {
   systemMetrics: SystemMetrics;
@@ -18,6 +19,7 @@ export default function ImpactTab({
   onUpdateSpecimens,
   onAddLog
 }: ImpactTabProps) {
+  const { t } = useLanguage();
   const [disturbance, setDisturbance] = useState(45);
   const [isVenting, setIsVenting] = useState(false);
   const [seismicStress, setSeismicStress] = useState(38);
@@ -99,23 +101,23 @@ export default function ImpactTab({
           <div className="space-y-4">
             <div className="space-y-1">
               <span className="font-mono text-[9px] text-red-400 bg-red-950/50 border border-red-800/40 px-2 py-0.5 rounded uppercase tracking-widest inline-block select-none">
-                05 // DISTURBANCE MATRIX
+                {t('impact.badge')}
               </span>
               <h3 className="text-xl font-light text-white uppercase font-sans">
-                MUTATION <span className="font-bold text-red-400">CHAMBER</span>
+                {t('impact.title')} <span className="font-bold text-red-400">{t('impact.title_highlight')}</span>
               </h3>
             </div>
             <div className="w-12 h-[2px] bg-red-400" />
             
             <p className="text-slate-400 text-xs font-sans leading-relaxed">
-              Manually stress the environmental chamber. Extreme user disturbance metrics triggers rapid mutation adaptions across the vent micro biome.
+              {t('impact.desc')}
             </p>
 
             {/* Dials sliders in simple clean layouts */}
             <div className="space-y-3 font-mono pt-2">
               <div className="space-y-1.5">
                 <div className="flex justify-between text-[10px] text-slate-400">
-                  <span>USER DISTURBANCE METRIC</span>
+                  <span>{t('impact.disturbance')}</span>
                   <span className="text-red-400 font-bold">{disturbance}%</span>
                 </div>
                 <div className="w-full bg-slate-950 h-2.5 rounded-full overflow-hidden p-0.5 border border-slate-800">
@@ -128,7 +130,7 @@ export default function ImpactTab({
 
               <div className="space-y-1.5">
                 <div className="flex justify-between text-[10px] text-slate-400">
-                  <span>SEISMIC FRICTION INDEX</span>
+                  <span>{t('impact.seismic')}</span>
                   <span className="text-red-400 font-bold">{seismicStress}%</span>
                 </div>
                 <input
@@ -149,14 +151,14 @@ export default function ImpactTab({
           </div>
 
           <div className="border-t border-slate-800 pt-3 text-[10px] font-mono text-slate-500">
-            <span>RIFT CRATER STRESS: MAXIMUM</span>
+            <span>{t('impact.rift_stress')}</span>
           </div>
         </div>
 
         {/* Center element: Environmental anomaly satellite map (col-span-12 or col-span-4) */}
         <div className="lg:col-span-4 flex flex-col justify-between border border-slate-800 bg-slate-950/40 rounded-lg p-5">
           <div className="space-y-4">
-            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider block">ANOMALY PLUME DETECTOR</span>
+            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider block">{t('impact.anomaly')}</span>
             
             <div className="w-full h-48 rounded overflow-hidden border border-slate-800 relative bg-slate-950 skeleton-screen">
               {/* Glitched scanning lines */}
@@ -171,14 +173,14 @@ export default function ImpactTab({
               />
 
               <div className="absolute top-2 left-2 bg-red-950/80 border border-red-800 text-[8px] font-mono text-red-400 px-1.5 py-0.5 rounded uppercase">
-                CRITICAL_DISTORTION
+                {t('impact.critical_distortion')}
               </div>
             </div>
 
             <div className="p-3 bg-red-950/10 border border-red-900/40 rounded flex items-start gap-2 text-red-400">
               <AlertCircle size={15} className="flex-shrink-0 mt-0.5" />
               <div className="font-mono text-[10px] leading-relaxed">
-                <span>[DANGER] High pressure warning inside sector RED-RIFT-04. Initiating manual venting overrides reduces vent explosion probability by 88%.</span>
+                <span>{t('impact.danger')}</span>
               </div>
             </div>
           </div>
@@ -189,7 +191,7 @@ export default function ImpactTab({
           <div className="space-y-4">
             <div className="flex items-center gap-1.5 border-b border-slate-800 pb-2">
               <TriangleAlert className="text-red-400" size={14} />
-              <span className="font-mono text-[9px] font-bold text-slate-300">INTERVENTION BOARD</span>
+              <span className="font-mono text-[9px] font-bold text-slate-300">{t('impact.intervention')}</span>
             </div>
 
             <div className="space-y-3">
@@ -200,7 +202,7 @@ export default function ImpactTab({
                 id="btn-mutation-pulse"
               >
                 <Zap size={13} className="animate-bounce" />
-                <span>MUTATION PULSE</span>
+                <span>{t('impact.btn_mutation')}</span>
               </button>
 
               {/* Vent Pressure button */}
@@ -215,7 +217,7 @@ export default function ImpactTab({
                 id="btn-steam-vent"
               >
                 <Wind size={13} className={isVenting ? 'animate-spin' : ''} />
-                <span>{isVenting ? 'RELEASE VELOCITY...' : 'VENT GEOTHERMAL LOAD'}</span>
+                <span>{isVenting ? t('impact.btn_venting_active') : t('impact.btn_venting')}</span>
               </button>
 
               {/* Solid reset overrides */}
@@ -225,13 +227,13 @@ export default function ImpactTab({
                 id="btn-force-stabilize"
               >
                 <RefreshCw size={12} />
-                <span>STABILIZER OVERRIDE</span>
+                <span>{t('impact.btn_stabilize')}</span>
               </button>
             </div>
           </div>
 
           <p className="text-[10px] text-slate-500 font-mono text-center select-none pt-4">
-            MANEO_SEC_SYSTEMS_OVERRIDE // DEEP RIFT
+            {t('impact.footer')}
           </p>
         </div>
 

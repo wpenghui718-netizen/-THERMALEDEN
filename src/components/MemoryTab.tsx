@@ -3,6 +3,7 @@ import { Database, Search, Download, Clock, ShieldCheck, HelpCircle, HardDrive, 
 import { LogEntry, SystemMetrics } from '../types';
 import { MEMORY_SHARDS, MemoryShard } from '../utils/data';
 import { playBeep } from '../utils/audio';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface MemoryTabProps {
   logs: LogEntry[];
@@ -11,9 +12,15 @@ interface MemoryTabProps {
 }
 
 export default function MemoryTab({ logs, systemMetrics, onAddLog }: MemoryTabProps) {
+  const { t } = useLanguage();
   const [selectedShard, setSelectedShard] = useState<MemoryShard>(MEMORY_SHARDS[0]);
   const [searchQuery, setSearchQuery] = useState('');
   const [downloadSuccess, setDownloadSuccess] = useState<string | null>(null);
+
+  const shardEpochKey = (id: string) => `shard.${id.replace('shard_', '')}_epoch`;
+  const shardTitleKey = (id: string) => `shard.${id.replace('shard_', '')}_title`;
+  const shardSourceKey = (id: string) => `shard.${id.replace('shard_', '')}_source`;
+  const shardSnippetKey = (id: string) => `shard.${id.replace('shard_', '')}_snippet`;
 
   const filteredLogs = logs.filter((l) => 
     l.message.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -39,23 +46,23 @@ export default function MemoryTab({ logs, systemMetrics, onAddLog }: MemoryTabPr
           <div className="space-y-4">
             <div className="space-y-1">
               <span className="font-mono text-[9px] text-fuchsia-400 bg-fuchsia-950/50 border border-fuchsia-800/40 px-2 py-0.5 rounded uppercase tracking-widest inline-block select-none">
-                06 // HARD DRIVE METADATA
+                {t('memory.badge')}
               </span>
               <h3 className="text-xl font-light text-white uppercase font-sans">
-                THERMAL <span className="font-bold text-fuchsia-400">ARCHIVE</span>
+                {t('memory.title')} <span className="font-bold text-fuchsia-400">{t('memory.title_highlight')}</span>
               </h3>
             </div>
             <div className="w-12 h-[2px] bg-fuchsia-400" />
             
             <p className="text-slate-400 text-xs font-sans leading-relaxed">
-              Retrieve historic telemetry parameters logged over consecutive thermodynamic cycles inside the deep rift crucible.
+              {t('memory.desc')}
             </p>
 
             {/* Static SVG Heat Graph Curve */}
             <div className="bg-slate-900/40 border border-slate-800 p-3 rounded">
               <div className="flex justify-between items-center text-[10px] font-mono mb-2 text-slate-400">
-                <span>CUMULATIVE HEAT INDEX // SEC</span>
-                <span className="text-fuchsia-400 font-bold">{systemMetrics.cumulativeHeat.toFixed(1)} GJ</span>
+                <span>{t('memory.heat_index')}</span>
+                <span className="text-fuchsia-400 font-bold">{systemMetrics.cumulativeHeat.toFixed(1)} {t('memory.gj')}</span>
               </div>
               
               <div className="h-28 w-full border-b border-l border-slate-800 relative flex items-end">
@@ -76,13 +83,13 @@ export default function MemoryTab({ logs, systemMetrics, onAddLog }: MemoryTabPr
                 </svg>
 
                 <div className="absolute right-2 top-2 bg-slate-950/90 border border-slate-800 text-[8px] font-mono text-slate-500 px-1 py-0.5 rounded uppercase select-none">
-                  SECTOR_Z_VENT_ARRAY
+                  {t('memory.sector')}
                 </div>
               </div>
 
               <div className="flex justify-between text-[8px] font-mono text-slate-500 mt-2">
-                <span>EPOCH 0 // SECTOR COLD</span>
-                <span>EPOCH 44 // CALIBRATED ACTIVE</span>
+                <span>{t('memory.epoch_cold')}</span>
+                <span>{t('memory.epoch_active')}</span>
               </div>
             </div>
 
@@ -99,8 +106,8 @@ export default function MemoryTab({ logs, systemMetrics, onAddLog }: MemoryTabPr
           </div>
 
           <div className="border-t border-slate-800 pt-3 text-[10px] font-mono text-slate-500 flex justify-between select-none">
-            <span>UNLOCKED ARCHS: {MEMORY_SHARDS.filter(s => systemMetrics.coreTemp >= s.unlockedAtTemp).length}/4</span>
-            <span>ENCRYPT: COAXIAL DES-3</span>
+            <span>{t('memory.unlocked')} {MEMORY_SHARDS.filter(s => systemMetrics.coreTemp >= s.unlockedAtTemp).length}/4</span>
+            <span>{t('memory.encrypt')}</span>
           </div>
         </div>
 
@@ -108,7 +115,7 @@ export default function MemoryTab({ logs, systemMetrics, onAddLog }: MemoryTabPr
         <div className="lg:col-span-4 flex flex-col border border-slate-800 bg-slate-950/40 rounded-lg p-5">
           <div className="flex items-center gap-1.5 border-b border-slate-800 pb-2.5 mb-4">
             <HardDrive className="text-fuchsia-400" size={15} />
-            <span className="font-mono text-[10px] font-bold text-slate-200">HISTORICAL MEMORY SHARDS</span>
+            <span className="font-mono text-[10px] font-bold text-slate-200">{t('memory.shards')}</span>
           </div>
 
           {/* List display */}
@@ -139,14 +146,14 @@ export default function MemoryTab({ logs, systemMetrics, onAddLog }: MemoryTabPr
                   disabled={!isUnlocked}
                 >
                   <div className="flex items-center justify-between gap-2 w-full">
-                    <span className="font-mono text-[10px] text-fuchsia-400 font-bold block">{shard.epoch}</span>
+                    <span className="font-mono text-[10px] text-fuchsia-400 font-bold block">{t(shardEpochKey(shard.id))}</span>
                     <span className="font-mono text-[9px] text-slate-500">
-                      {isUnlocked ? 'DECRYPTED' : `REQD_TEMP // ${shard.unlockedAtTemp}°C`}
+                      {isUnlocked ? t('memory.decrypted') : `${t('memory.reqd_temp')} ${shard.unlockedAtTemp}°C`}
                     </span>
                   </div>
 
                   <span className="font-sans text-xs font-semibold block truncate leading-tight">
-                    {shard.title}
+                    {t(shardTitleKey(shard.id))}
                   </span>
                 </button>
               );
@@ -161,10 +168,10 @@ export default function MemoryTab({ logs, systemMetrics, onAddLog }: MemoryTabPr
               <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
                 <div className="flex items-center gap-1.5">
                   <Database className="text-fuchsia-500" size={15} />
-                  <span className="font-mono text-[10px] font-bold text-slate-200">CORE CHRONOLOGY SECFILE</span>
+                  <span className="font-mono text-[10px] font-bold text-slate-200">{t('memory.chronology')}</span>
                 </div>
                 <span className="font-mono text-[8px] bg-slate-950 border border-slate-800 px-1 py-0.5 rounded text-fuchsia-400 select-none">
-                  INTEGRITY: 100%
+                  {t('memory.integrity')}
                 </span>
               </div>
 
@@ -173,7 +180,7 @@ export default function MemoryTab({ logs, systemMetrics, onAddLog }: MemoryTabPr
                 <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500" />
                 <input
                   type="text"
-                  placeholder="FILTER SYSTEM LOGS..."
+                  placeholder={t('memory.search_placeholder')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full bg-slate-950/80 hover:bg-slate-950 border border-slate-800 text-[10px] font-mono pl-8 pr-3 py-1.5 rounded focus:outline-none focus:border-fuchsia-500 text-slate-300 tracking-wider uppercase"
@@ -201,7 +208,7 @@ export default function MemoryTab({ logs, systemMetrics, onAddLog }: MemoryTabPr
                 ))}
                 {filteredLogs.length === 0 && (
                   <p className="text-center text-slate-600 font-mono text-[10px] pt-12 select-none uppercase">
-                    NO LOGS FOUND FOR SCAN FILTER
+                    {t('memory.no_logs')}
                   </p>
                 )}
               </div>
@@ -209,11 +216,11 @@ export default function MemoryTab({ logs, systemMetrics, onAddLog }: MemoryTabPr
 
             {/* Selected archive preview details */}
             <div className="border-t border-slate-850 pt-4 mt-2">
-              <span className="font-mono text-[8px] text-fuchsia-400 uppercase tracking-widest block font-bold">ACTIVE SHARD DECRYPTION</span>
-              <p className="font-mono text-[10px] text-slate-500 mb-1">{selectedShard.source} // {selectedShard.epoch}</p>
+              <span className="font-mono text-[8px] text-fuchsia-400 uppercase tracking-widest block font-bold">{t('memory.active_shard')}</span>
+              <p className="font-mono text-[10px] text-slate-500 mb-1">{t(shardSourceKey(selectedShard.id))} // {t(shardEpochKey(selectedShard.id))}</p>
               
               <div className="p-3 bg-slate-900/30 border border-slate-800/80 rounded h-[110px] overflow-y-auto text-[10px] font-sans text-slate-300 leading-normal scrollbar-thin">
-                {selectedShard.snippet}
+                {t(shardSnippetKey(selectedShard.id))}
               </div>
 
               <button
@@ -227,7 +234,7 @@ export default function MemoryTab({ logs, systemMetrics, onAddLog }: MemoryTabPr
                 id="btn-download-shard"
               >
                 <Download size={11} />
-                <span>{downloadSuccess === selectedShard.id ? 'DECRYPT KEY DOWNLOADED' : 'DOWNLOAD DECRYPT KEY'}</span>
+                <span>{downloadSuccess === selectedShard.id ? t('memory.btn_downloaded') : t('memory.btn_download')}</span>
               </button>
             </div>
           </div>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Radar, RefreshCcw, Compass, MapPin, Layers, Crosshair } from 'lucide-react';
 import { playBeep } from '../utils/audio';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface VentCarrier {
   id: string;
@@ -19,7 +20,12 @@ const THERMAL_CARRIERS: VentCarrier[] = [
   { id: 'v_04', name: 'WHITE_DRIFT_CASCADE', depth: -3325, temp: 184.8, flowVelocity: 1.1, minerals: 'Silica, Carbonates', coords: { x: 20, y: 65 } }
 ];
 
+function ventNameKey(id: string): string {
+  return `vent.${id}`;
+}
+
 export default function ScanTab() {
+  const { t } = useLanguage();
   const [selectedVent, setSelectedVent] = useState<VentCarrier>(THERMAL_CARRIERS[0]);
   const [sweepFreq, setSweepFreq] = useState(8);
   const [zoomLevel, setZoomLevel] = useState(100);
@@ -43,17 +49,17 @@ export default function ScanTab() {
           <div className="space-y-4">
             <div className="space-y-1">
               <span className="font-mono text-[9px] text-cyan-400 bg-cyan-950/50 border border-cyan-800/40 px-2 py-0.5 rounded uppercase tracking-widest inline-block select-none">
-                03 // SCAN STATION
+                {t('scan.badge')}
               </span>
               <h3 className="text-xl font-light text-white uppercase font-sans">
-                RADAR <span className="font-bold text-cyan-400">CALIBRATION</span>
+                {t('scan.title')} <span className="font-bold text-cyan-400">{t('scan.title_highlight')}</span>
               </h3>
             </div>
             
             <div className="w-12 h-[2px] bg-cyan-400" />
             
             <p className="text-slate-400 text-xs font-sans leading-relaxed">
-              Calibrate systemic ping sweeps of the hydrothermal tectonic ridge to localize sulfur carrying mineral chimneys.
+              {t('scan.desc')}
             </p>
           </div>
 
@@ -61,7 +67,7 @@ export default function ScanTab() {
             {/* Calibration Sliders */}
             <div className="space-y-2">
               <div className="flex justify-between text-[10px] text-slate-400">
-                <span>SWEEP FREQUENCY:</span>
+                <span>{t('scan.sweep')}</span>
                 <span className="text-cyan-400 font-bold">{sweepFreq} Hz</span>
               </div>
               <input
@@ -80,7 +86,7 @@ export default function ScanTab() {
 
             <div className="space-y-2">
               <div className="flex justify-between text-[10px] text-slate-400">
-                <span>RADAR RANGE ZOOM:</span>
+                <span>{t('scan.zoom')}</span>
                 <span className="text-cyan-400 font-bold">{zoomLevel}%</span>
               </div>
               <input
@@ -105,7 +111,7 @@ export default function ScanTab() {
             id="btn-trigger-scan"
           >
             <RefreshCcw size={13} className={isRefreshing ? 'animate-spin' : ''} />
-            <span>{isRefreshing ? 'Sweeping Ridge...' : 'RE-SCAN RIDGE'}</span>
+            <span>{isRefreshing ? t('scan.btn_scanning') : t('scan.btn_scan')}</span>
           </button>
         </div>
 
@@ -152,7 +158,7 @@ export default function ScanTab() {
                     top: `${vent.coords.y}%`,
                     transform: `translate(-50%, -50%) scale(${zoomLevel / 100})`
                   }}
-                  title={vent.name}
+                  title={t(ventNameKey(vent.id))}
                   id={`btn-radar-dot-${vent.id}`}
                 >
                   <span className={`absolute -inset-2.5 rounded-full ${isActive ? 'bg-cyan-400/20 border border-cyan-400/40 animate-ping' : 'bg-transparent'} group-hover:bg-cyan-500/10 transition-all`} />
@@ -163,7 +169,7 @@ export default function ScanTab() {
                   
                   {/* Small tag */}
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 bg-slate-950/90 text-slate-400 border border-slate-800 text-[8px] font-mono px-1 py-0.5 rounded whitespace-nowrap opacity-30 group-hover:opacity-100 transition-opacity">
-                    {vent.name}
+                    {t(ventNameKey(vent.id))}
                   </span>
                 </button>
               );
@@ -175,8 +181,8 @@ export default function ScanTab() {
 
           {/* Radar Footer decoration */}
           <div className="mt-4 flex justify-between w-full font-mono text-[9px] text-slate-500">
-            <span>PING RANGE: 4.8 NM</span>
-            <span>BEARING: 184° SE</span>
+            <span>{t('scan.range')}</span>
+            <span>{t('scan.bearing')}</span>
           </div>
         </div>
 
@@ -186,8 +192,8 @@ export default function ScanTab() {
             <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
               <Compass className="text-cyan-400" size={16} />
               <div>
-                <span className="font-mono text-[8px] text-slate-500 uppercase block">GEOLOGICAL TARGET ARCHIVE</span>
-                <span className="font-mono text-xs font-bold text-slate-200">{selectedVent.name}</span>
+                <span className="font-mono text-[8px] text-slate-500 uppercase block">{t('scan.target')}</span>
+                <span className="font-mono text-xs font-bold text-slate-200">{t(ventNameKey(selectedVent.id))}</span>
               </div>
             </div>
 
@@ -201,29 +207,29 @@ export default function ScanTab() {
                 className="w-full h-full object-cover brightness-[0.65] contrast-125"
               />
               <div className="absolute bottom-2 left-2 bg-slate-950/80 border border-slate-800 text-[8px] font-mono text-cyan-400 px-1.5 py-0.5 rounded uppercase">
-                SONAR PROFILE
+                {t('scan.sonar')}
               </div>
             </div>
 
             {/* Metrical data listing */}
             <div className="space-y-2.5 font-mono text-xs">
               <div className="flex justify-between border-b border-slate-900 pb-1.5">
-                <span className="text-slate-500">DEPTH LIMIT:</span>
+                <span className="text-slate-500">{t('scan.depth')}</span>
                 <span className="text-slate-300">{selectedVent.depth} M</span>
               </div>
 
               <div className="flex justify-between border-b border-slate-900 pb-1.5">
-                <span className="text-slate-500">PEAK THERMO_TEMP:</span>
+                <span className="text-slate-500">{t('scan.temp')}</span>
                 <span className="text-cyan-400 font-semibold">{selectedVent.temp}°C</span>
               </div>
 
               <div className="flex justify-between border-b border-slate-900 pb-1.5">
-                <span className="text-slate-500">CARRIER VELOCITY:</span>
+                <span className="text-slate-500">{t('scan.velocity')}</span>
                 <span className="text-slate-300">{selectedVent.flowVelocity} M/S</span>
               </div>
 
               <div className="flex justify-between">
-                <span className="text-slate-500">MINERAL CONSTITUTION:</span>
+                <span className="text-slate-500">{t('scan.minerals')}</span>
                 <span className="text-slate-300 text-right text-[10px] max-w-[150px] truncate">{selectedVent.minerals}</span>
               </div>
             </div>
@@ -231,7 +237,7 @@ export default function ScanTab() {
 
           {/* Prompt Selector */}
           <div className="border-t border-slate-800/60 pt-4 mt-4 space-y-2">
-            <span className="font-mono text-[9px] text-slate-500 block">SECTOR SELECTIONS</span>
+            <span className="font-mono text-[9px] text-slate-500 block">{t('scan.sector')}</span>
             <div className="grid grid-cols-2 gap-2">
               {THERMAL_CARRIERS.map((v) => (
                 <button

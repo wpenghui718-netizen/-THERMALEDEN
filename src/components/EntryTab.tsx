@@ -2,12 +2,14 @@ import React from 'react';
 import { Play, Power, AlertTriangle, ShieldAlert, Cpu } from 'lucide-react';
 import { motion } from 'motion/react';
 import { playBeep } from '../utils/audio';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface EntryTabProps {
   onInitiateWake: () => void;
 }
 
 export default function EntryTab({ onInitiateWake }: EntryTabProps) {
+  const { t } = useLanguage();
   return (
     <div className="flex-1 flex flex-col items-center justify-center p-6 md:p-12 relative overflow-hidden grid-bg-ambient min-h-[70vh]">
       {/* Absolute glow backing */}
@@ -47,25 +49,25 @@ export default function EntryTab({ onInitiateWake }: EntryTabProps) {
               {/* Status overlay */}
               <div className="absolute inset-x-0 bottom-4 text-center z-20">
                 <span className="font-mono text-[9px] text-slate-400 bg-slate-950/90 px-2 py-0.5 border border-slate-800 rounded uppercase tracking-widest inline-block select-none">
-                  STATE: DORMANT
+                  {t('entry.state_dormant')}
                 </span>
               </div>
             </div>
 
             {/* Orbiting HUD details */}
             <div className="absolute top-2 left-2 text-[8px] font-mono text-slate-500 tracking-wider select-none">
-              SEC: CORE_V04
+              {t('entry.sec_core')}
             </div>
             <div className="absolute bottom-2 right-2 text-[8px] font-mono text-slate-500 tracking-wider select-none">
-              DEPTH: -3,480M
+              {t('entry.depth')}
             </div>
           </div>
 
           {/* Core Telemetry Indicators */}
           <div className="mt-4 flex gap-4 text-slate-500 font-mono text-[10px]">
-            <div>SYS_STABILITY // 100% (STAGNATE)</div>
+            <div>{t('entry.stability_val')}</div>
             <div>•</div>
-            <div>H2S_CONC // 0.0 PPM</div>
+            <div>{t('entry.h2s_conc')}</div>
           </div>
         </div>
 
@@ -73,28 +75,28 @@ export default function EntryTab({ onInitiateWake }: EntryTabProps) {
         <div className="flex flex-col justify-center space-y-6">
           <div className="space-y-3">
             <span className="text-[10px] font-mono text-amber-500 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded uppercase tracking-widest inline-block font-semibold">
-              01 // DEEP SANCTUARY
+              {t('entry.badge')}
             </span>
             <h2 className="text-3xl font-light tracking-wide text-white uppercase font-sans">
-              THERMALEDEN <span className="font-bold text-amber-500">INITIATION</span>
+              {t('entry.title')} <span className="font-bold text-amber-500">{t('entry.title_highlight')}</span>
             </h2>
             <div className="w-16 h-[2px] bg-amber-500" />
           </div>
 
           <div className="text-slate-300 space-y-4 text-sm font-sans leading-relaxed">
             <p>
-              The digital ecology sanctuary has drifted into a state of absolute low thermal entropy. All metabolic systems, chemosynthetic stimulators, and genetic bioreactors are currently suspended in cryogenic stasis at depth coordinates -3,480m.
+              {t('entry.p1')}
             </p>
             <p className="border-l-2 border-slate-800 pl-4 py-1.5 text-slate-400 text-xs font-mono">
-              [CRITICAL] Thermal thermal carrier ignition resides at 0%. Activation sequence requires manual override ignition of the prime catalytic resonator node.
+              {t('entry.p2')}
             </p>
           </div>
 
           {/* Action Station */}
           <div className="bg-slate-900/40 border border-slate-800 rounded-lg p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="space-y-1 text-center sm:text-left">
-              <span className="font-mono text-[10px] text-slate-400 tracking-wider block">READY FOR FUEL CONJECTURE</span>
-              <span className="font-mono text-xs text-slate-500 block">Requires: 15.4 GJ Initiator Load</span>
+              <span className="font-mono text-[10px] text-slate-400 tracking-wider block">{t('entry.action_label')}</span>
+              <span className="font-mono text-xs text-slate-500 block">{t('entry.action_req')}</span>
             </div>
 
             <button
@@ -106,14 +108,14 @@ export default function EntryTab({ onInitiateWake }: EntryTabProps) {
               id="btn-initiate-wake"
             >
               <Power size={14} className="group-hover:rotate-45 transition-transform duration-300" />
-              <span>Initiate Wake Sequence</span>
+              <span>{t('entry.btn_wake')}</span>
             </button>
           </div>
 
           {/* Warning Footer */}
           <div className="flex items-center gap-2 text-[10px] font-mono text-slate-500">
             <AlertTriangle size={11} className="text-slate-600" />
-            <span>WARNING: IGNITION GENERATES INTENSE GEOTHERMAL OUTPUT STRESS</span>
+            <span>{t('entry.warning')}</span>
           </div>
         </div>
       </div>

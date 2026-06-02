@@ -2,6 +2,7 @@ import React from 'react';
 import { Lock, FileText, Activity, ShieldAlert, Cpu, Eye, Compass } from 'lucide-react';
 import { TabId } from '../types';
 import { playBeep } from '../utils/audio';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface NavBarProps {
   activeTab: TabId;
@@ -10,13 +11,14 @@ interface NavBarProps {
 }
 
 export default function NavBar({ activeTab, onTabChange, systemState }: NavBarProps) {
+  const { t } = useLanguage();
   const tabs = [
-    { id: 'entry' as TabId, num: '01', title: 'ENTRY', stateLabel: 'Dormant State', icon: Cpu, color: 'border-slate-800 text-slate-400' },
-    { id: 'wake' as TabId, num: '02', title: 'WAKE', stateLabel: 'Ignite Core', icon: Eye, color: 'border-amber-900/40 text-amber-500' },
-    { id: 'scan' as TabId, num: '03', title: 'SCAN', stateLabel: 'Radar Mapping', icon: Compass, color: 'border-cyan-900/40 text-cyan-400' },
-    { id: 'biosphere' as TabId, num: '04', title: 'BIOSPHERE', stateLabel: 'Active Colony', icon: Activity, color: 'border-emerald-950/40 text-emerald-400' },
-    { id: 'impact' as TabId, num: '05', title: 'IMPACT', stateLabel: 'Mutation Stalls', icon: ShieldAlert, color: 'border-red-950/40 text-red-400' },
-    { id: 'memory' as TabId, num: '06', title: 'MEMORY', stateLabel: 'Core Archives', icon: FileText, color: 'border-fuchsia-950/40 text-fuchsia-400' }
+    { id: 'entry' as TabId, num: '01', title: t('nav.entry'), stateLabel: t('nav.state_dormant'), icon: Cpu, color: 'border-slate-800 text-slate-400' },
+    { id: 'wake' as TabId, num: '02', title: t('nav.wake'), stateLabel: t('nav.state_ignite'), icon: Eye, color: 'border-amber-900/40 text-amber-500' },
+    { id: 'scan' as TabId, num: '03', title: t('nav.scan'), stateLabel: t('nav.state_radar'), icon: Compass, color: 'border-cyan-900/40 text-cyan-400' },
+    { id: 'biosphere' as TabId, num: '04', title: t('nav.biosphere'), stateLabel: t('nav.state_colony'), icon: Activity, color: 'border-emerald-950/40 text-emerald-400' },
+    { id: 'impact' as TabId, num: '05', title: t('nav.impact'), stateLabel: t('nav.state_mutation'), icon: ShieldAlert, color: 'border-red-950/40 text-red-400' },
+    { id: 'memory' as TabId, num: '06', title: t('nav.memory'), stateLabel: t('nav.state_archives'), icon: FileText, color: 'border-fuchsia-950/40 text-fuchsia-400' }
   ];
 
   // Restrict access if systems are dormant and user has not ignited yet
@@ -62,7 +64,7 @@ export default function NavBar({ activeTab, onTabChange, systemState }: NavBarPr
               }`}
               id={`nav-tab-${tab.id}`}
               disabled={locked && active}
-              title={locked ? "Restricted: Ignite Core to Unlock" : `Go to Tab ${tab.num}`}
+              title={locked ? t('nav.tooltip_locked') : `Go to Tab ${tab.num}`}
             >
               {active && (
                 <span className={`absolute top-0 left-0 w-1 h-full ${
@@ -94,7 +96,7 @@ export default function NavBar({ activeTab, onTabChange, systemState }: NavBarPr
               <span className={`block text-[9px] mt-2 whitespace-nowrap overflow-hidden text-ellipsis uppercase tracking-tight ${
                 locked ? 'text-slate-600' : active ? 'text-emerald-400 font-medium' : 'text-slate-500'
               }`}>
-                {locked ? 'RESTRICTED' : tab.stateLabel}
+                {locked ? t('nav.restricted') : tab.stateLabel}
               </span>
             </button>
           );
